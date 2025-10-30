@@ -953,7 +953,7 @@
         const l2TurkishWordsProgress = document.getElementById('l2-turkish-words-progress');
         const passiveSuffixesEl = document.querySelector('.l2-passive-suffixes'); 
         const l2RootArea = document.getElementById('l2-root-area');
-        const l2BottomArea = document.getElementById('l2-bottom-area'); // EKLENDİ
+        const l2BottomArea = document.getElementById('l2-bottom-area'); 
 
         // Ses Mantiği
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -1005,13 +1005,13 @@
         let currentRootIndex = 0; let allRoots = []; 
         let ghostElement = null; let stayingClone = null; // Hareketsiz klon
         let currentTurkishWordIndex = 0; let currentCorrectWordsData = [];
+        let currentTouchDropTarget = null; // *** YENİ EKLENDİ: Mobil sürükleme hedefi ***
         
         // Önceki 'pointer' değişkenleri SİLİNDİ.
 
         // HTML DOM'u bir kerelik ayarla
         function setupDOMStructure() {
-            // Türkçe kelimeler zaten HTML'de en üstte, bu yüzden prepend'e gerek yok.
-            // level2Container.prepend(l2TurkishWordsProgress);
+            // ...
         }
 
         // Oyun Başlatma
@@ -1112,11 +1112,12 @@
             
             rootElement.classList.remove('faded');
 
-            // 2. Sürükleme Olaylarının Atanması
-            rootElement.addEventListener('dragstart', handleDragStart); // <-- Spec 2
-            rootElement.addEventListener('dragend', handleDragEnd);     // <-- Spec 2
+            // 2. Sürükleme Olaylarının Atanması (Masaüstü)
+            rootElement.addEventListener('dragstart', handleDragStart); 
+            rootElement.addEventListener('dragend', handleDragEnd);     
             
-            // Eski 'pointerdown' dinleyicisi SİLİNDİ.
+            // *** YENİ EKLENDİ: Mobil için dokunma olayları ***
+            rootElement.addEventListener('touchstart', handleTouchStart, { passive: false });
             
             l2PatternsWrapper.innerHTML = '';
             l2DraggableRootWrapper.innerHTML = ''; 
@@ -1232,28 +1233,24 @@
         
         function updateMistakeDisplay() { /*...*/ }
         
-        // --- ESKİ POINTER EVENTS FONKSİYONLARI SİLİNDİ ---
-        // onPointerDown, onPointerMove, onPointerUp
         
-        // *** YENİ: Spec 4 - Sürükleme Başlangıcı (DÜZELTİLDİ) ***
+        // --- MASAÜSTÜ SÜRÜKLEME (HTML5 API) ---
+
         function handleDragStart(e) {
             if (!gameState.isGameActive) { e.preventDefault(); return; }
             playGenericSound('touch');
 
-            // Referans Saklama
             draggedRootElement = e.target; 
 
-            // Hayalet Kopya (Ghost Element)
             ghostElement = draggedRootElement.cloneNode(true);
             ghostElement.classList.add('drag-ghost');
-            ghostElement.style.position = 'absolute'; // setDragImage'in yakalayabilmesi için
-            ghostElement.style.top = '-1000px';      // Ekranda görünmesin
+            ghostElement.style.position = 'absolute'; 
+            ghostElement.style.top = '-1000px';      
             document.body.appendChild(ghostElement); 
 
-            // Yerinde Kalan Soluk Kopya (Staying Clone)
             stayingClone = draggedRootElement.cloneNode(true);
             stayingClone.style.cssText = 'cursor:default; opacity:0.4; animation:none; z-index:1;';
-            stayingClone.classList.remove('active'); // Animasyonu kaldır
+            stayingClone.classList.remove('active'); 
             
             if (draggedRootElement.parentElement === l2PatternsWrapper) { // Masaüstü
                 stayingClone.style.gridRow = draggedRootElement.style.gridRow;
@@ -1268,39 +1265,29 @@
             }
             draggedRootElement.parentElement.appendChild(stayingClone);
             
-            // Orijinal Kartı Gizleme
             draggedRootElement.style.opacity = '0';
 
-            // Sürükleme Verisi
             e.dataTransfer.effectAllowed = 'move';
             e.dataTransfer.setData('text/plain', 'dragging'); 
             
-            // *** DÜZELTME: setDragImage'i setTimeout içine taşı ***
-            // Bu, tarayıcıya stilleri (mavi çizgi, scale) uygulaması için zaman tanır.
             setTimeout(() => {
                 if (ghostElement) {
                     const rect = ghostElement.getBoundingClientRect();
                     const offsetX = rect.width / 2;
                     const offsetY = rect.height / 2;
-                    
-                    // Tarayıcının, stilleri uygulanmış (mavi çizgili) klonun fotoğrafını çekmesini sağla
                     e.dataTransfer.setDragImage(ghostElement, offsetX, offsetY);
                 }
-            }, 0); // 0 milisaniye, tarayıcının bir sonraki "tick"ine (kare) kadar bekle demektir.
+            }, 0); 
         }
 
-        // *** YENİ: Spec 6 - Sürükleme Sonu ve Temizlik ***
         function handleDragEnd(e) {
-            // Temizlik
             if (ghostElement) ghostElement.remove();
             if (stayingClone) stayingClone.remove();
 
-            // Görünür Yapma (eğer tur bitmediyse)
             if (draggedRootElement && !draggedRootElement.classList.contains('faded')) {
                 draggedRootElement.style.opacity = '1';
             }
             
-            // Referansı Temizle
             draggedRootElement = null;
             ghostElement = null;
             stayingClone = null;
@@ -1308,7 +1295,6 @@
             clearHovers();
         }
         
-        // *** YENİ: Spec 5 - Bırakma alanı yardımcıları ***
         function handleDragOver(e) { 
             e.preventDefault(); 
             const pg = e.target.closest('.l2-pattern-group'); 
@@ -1325,11 +1311,15 @@
             l2PatternsWrapper.querySelectorAll('.l2-pattern-group.dragover').forEach(g => g.classList.remove('dragover')); 
         }
 
-        // *** YENİ: Spec 5 & 7 - Bırakma Olayı ve Tur Mantığı ***
+        // *** GÜNCELLENDİ: Bırakma mantığı yeniden düzenlendi ***
         function handleDrop(e) {
              e.preventDefault();
              const patternGroup = e.target.closest('.l2-pattern-group');
-             
+             processDrop(patternGroup); // Ana mantığı çağır
+        }
+        
+        // *** YENİ: Hem fare hem de dokunma için ortak bırakma mantığı ***
+        function processDrop(patternGroup) {
              if (!patternGroup || !draggedRootElement || !gameState.isGameActive) { 
                  if (patternGroup) patternGroup.classList.remove('dragover'); 
                  return; 
@@ -1424,6 +1414,7 @@
              }
         }
         
+        
         // --- Ekran ve Buton Yöneticileri (Değişiklik yok) ---
         function showScreen(screenName) {
             startScreen.classList.add('hidden'); resultsScreen.classList.add('hidden'); level2Container.classList.remove('active');
@@ -1462,6 +1453,121 @@
             if (currentRootIndex < allRoots.length) { setupLevel2(gameState.mode, currentRootIndex); } 
             else { endGameLevel2(true); }
         });
+
+
+        // *** YENİ: MOBİL DOKUNMA OLAYLARI (TOUCH EVENTS) ***
+
+        function handleTouchStart(e) {
+            if (!gameState.isGameActive) return;
+            // Sayfanın kaymasını engelle
+            e.preventDefault(); 
+            playGenericSound('touch');
+
+            draggedRootElement = e.target.closest('.l2-draggable-root');
+            if (!draggedRootElement) return;
+
+            // --- Hayalet Kopyayı Oluştur (handleDragStart'tan uyarlandı) ---
+            ghostElement = draggedRootElement.cloneNode(true);
+            ghostElement.classList.add('drag-ghost');
+            // Stil: Hayaleti parmağı takip edecek şekilde ayarla
+            ghostElement.style.transform = 'translate(-50%, -50%) scale(1.05)'; 
+            document.body.appendChild(ghostElement); 
+
+            // --- Yerinde Kalan Klonu Oluştur (handleDragStart'tan uyarlandı) ---
+            stayingClone = draggedRootElement.cloneNode(true);
+            stayingClone.style.cssText = 'cursor:default; opacity:0.4; animation:none; z-index:1;';
+            stayingClone.classList.remove('active');
+            
+            if (draggedRootElement.parentElement === l2PatternsWrapper) { // Masaüstü
+                stayingClone.style.gridRow = draggedRootElement.style.gridRow;
+                stayingClone.style.gridColumn = draggedRootElement.style.gridColumn;
+                stayingClone.style.alignSelf = 'center';
+                stayingClone.style.justifySelf = 'center';
+            } else { // Mobil
+                 stayingClone.style.position = 'absolute'; 
+                 stayingClone.style.top = '0';
+                 stayingClone.style.left = '50%';
+                 stayingClone.style.transform = 'translateX(-50%)';
+            }
+            draggedRootElement.parentElement.appendChild(stayingClone);
+            
+            // --- Orijinali Gizle ---
+            draggedRootElement.style.opacity = '0';
+
+            // --- Hayaleti Parmağın Olduğu Yere Taşı ---
+            const touch = e.touches[0];
+            ghostElement.style.left = `${touch.clientX}px`;
+            ghostElement.style.top = `${touch.clientY}px`;
+
+            // --- Hareket ve Bırakma Dinleyicilerini Ekle ---
+            document.addEventListener('touchmove', handleTouchMove, { passive: false });
+            document.addEventListener('touchend', handleTouchEnd);
+        }
+
+        function handleTouchMove(e) {
+            if (!ghostElement || !draggedRootElement) return;
+            // Sayfa kaymasını engelle
+            e.preventDefault(); 
+
+            const touch = e.touches[0];
+            
+            // Hayaleti parmakla hareket ettir
+            ghostElement.style.left = `${touch.clientX}px`;
+            ghostElement.style.top = `${touch.clientY}px`;
+
+            // Parmağın altındaki hedefi bul
+            // Hayaleti geçici olarak gizle ki altındaki elementi bulabilelim
+            ghostElement.style.display = 'none'; 
+            const elementUnderFinger = document.elementFromPoint(touch.clientX, touch.clientY);
+            ghostElement.style.display = ''; // Tekrar göster
+            
+            const dropTarget = elementUnderFinger ? elementUnderFinger.closest('.l2-pattern-group') : null;
+
+            // 'dragover' ve 'dragleave' mantığını taklit et
+            if (dropTarget && gameState.isGameActive && !dropTarget.querySelector('.l2-derived-word')) {
+                // Eğer yeni bir hedefe geldiysek, eskisinin vurgusunu kaldır
+                if (currentTouchDropTarget && currentTouchDropTarget !== dropTarget) {
+                    currentTouchDropTarget.classList.remove('dragover');
+                }
+                dropTarget.classList.add('dragover');
+                currentTouchDropTarget = dropTarget; // Şu anki hedefi sakla
+            } else {
+                // Eğer bir hedeften ayrıldıysak, vurgusunu kaldır
+                if (currentTouchDropTarget) {
+                    currentTouchDropTarget.classList.remove('dragover');
+                    currentTouchDropTarget = null;
+                }
+            }
+        }
+
+        function handleTouchEnd(e) {
+            // --- Bırakma İşlemi ---
+            if (currentTouchDropTarget) {
+                // Geçerli bir hedefe bıraktık, ana bırakma mantığını çağır
+                processDrop(currentTouchDropTarget); 
+                currentTouchDropTarget.classList.remove('dragover');
+            }
+
+            // --- Temizlik (handleDragEnd'den uyarlandı) ---
+            if (ghostElement) ghostElement.remove();
+            if (stayingClone) stayingClone.remove();
+
+            // Eğer tur bitmediyse orijinal kartı geri göster
+            if (draggedRootElement && !draggedRootElement.classList.contains('faded')) {
+                draggedRootElement.style.opacity = '1';
+            }
+            
+            // --- Durumu Sıfırla ---
+            draggedRootElement = null;
+            ghostElement = null;
+            stayingClone = null;
+            currentTouchDropTarget = null;
+
+            // --- Dinleyicileri Kaldır ---
+            document.removeEventListener('touchmove', handleTouchMove);
+            document.removeEventListener('touchend', handleTouchEnd);
+        }
+
 
         setupDOMStructure(); // HTML'i ilk yüklemede ayarla
         initializeGame();
