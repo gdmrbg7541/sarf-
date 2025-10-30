@@ -588,14 +588,13 @@
         }
 
 
-        /* GÜNCELLENDİ - Mobil Uyum (Neumorphism için ayarlandı) */
+        /* *** GÜNCELLENDİ - Mobil Uyum (İyileştirildi) *** */
         @media (max-width: 600px) {
             :root { 
-                --base-font-size: 1.9em; /* Küçültüldü (2.2em idi) */
-                --circle-size: 24px; /* Küçültüldü (26px idi) */
-                --circle-font-size: 0.65em; /* Küçültüldü (0.7em idi) */
+                --base-font-size: 1.7em; /* GÜNCELLENDİ (1.9em idi) - Genel küçültme */
+                --circle-size: 24px; 
+                --circle-font-size: 0.65em; 
                 
-                /* GÜNCELLENDİ: Mobil için daha yumuşak 3D gölgeler */
                 --shadow-light: -5px -5px 10px rgba(255, 255, 255, 1);
                 --shadow-dark: 5px 5px 10px rgba(0, 0, 0, 0.1);
                 --shadow-inset: inset -3px -3px 6px rgba(255, 255, 255, 1), inset 3px 3px 6px rgba(0, 0, 0, 0.1);
@@ -613,28 +612,29 @@
                 max-height: none; 
                 overflow-y: visible; 
                 padding: 10px 5px; 
-                gap: 10px; /* Mobil boşluk artırıldı */
+                gap: 10px; 
             }
 
-            /* Güncellendi: Daha kompakt kök kartı */
             .l2-draggable-root { 
                 gap: 6px; 
-                font-size: calc(var(--base-font-size) * 1.05); /* Küçültüldü (1.1 idi) */
-                padding: 4px 8px; /* Küçültüldü (5px 10px idi) */
+                font-size: calc(var(--base-font-size) * 1.05); 
+                padding: 4px 8px; 
             }
             
-            /* Güncellendi: Daha küçük kalıp kutusu */
             .l2-pattern-group { 
-                min-height: calc(var(--base-font-size) * 2.5); /* Küçültüldü (2.8 idi) */
+                min-height: calc(var(--base-font-size) * 2.5); 
                 padding-right: calc(var(--circle-size) + 8px); 
             }
-             /* Güncellendi: Daha küçük kalıp yazıları */
+             
+             /* GÜNCELLENDİ: Hareke boşluğu ve boyutu düzeltildi */
              .l2-pattern-number { 
-                 font-size: calc(var(--base-font-size) * 0.85); /* Küçültüldü (0.9 idi) */
+                 font-size: calc(var(--base-font-size) * 0.85); 
                  width: calc(100% - var(--circle-size) - 12px); 
+                 gap: 8px; /* Harekeler arası boşluk azaltıldı (Masaüstünde 40px idi) */
              } 
+             
             .l2-derived-word { 
-                font-size: calc(var(--base-font-size) * 0.85); /* Küçültüldü (0.9 idi) */
+                font-size: calc(var(--base-font-size) * 0.85); 
                 width: calc(100% - var(--circle-size) - 12px); 
             }
              .l2-derived-word span { font-size: 0.7em; } 
@@ -645,18 +645,20 @@
                 padding: 10px 5px; 
             } 
             
+            /* GÜNCELLENDİ: Türkçe kelime alanı sıkıştırıldı */
             #l2-turkish-words-progress { 
                 flex-direction: row; 
                 flex-wrap: wrap; 
                 justify-content: center; 
-                gap: 8px;
+                gap: 6px; /* Azaltıldı (8px idi) */
                 padding: 5px;
                 margin: 5px 0; 
             } 
-            /* Güncellendi: Daha küçük Türkçe kelime */
+            
+            /* GÜNCELLENDİ: Türkçe kelime boyutu küçültüldü */
             .l2-turkish-word { 
-                font-size: 1.0em; /* Küçültüldü (1.1em idi) */
-                padding: 6px 12px; 
+                font-size: 0.9em; /* Küçültüldü (1.0em idi) */
+                padding: 6px 10px; /* Azaltıldı (6px 12px idi) */
                 margin: 2px; 
             } 
 
@@ -676,9 +678,9 @@
                 padding-top: 5px; 
             }
             
-            /* Güncellendi: Daha küçük alt ekler */
+            /* GÜNCELLENDİ: Alt ek yazısı küçültüldü */
             .l2-passive-suffixes { 
-                font-size: 2.4em; /* Küçültüldü (3em idi) */
+                font-size: 1.9em; /* Küçültüldü (2.4em idi) */
                 text-align: center; 
                 width: 100%; 
                 margin-top: 10px; 
