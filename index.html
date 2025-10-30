@@ -591,14 +591,14 @@
         /* GÜNCELLENDİ - Mobil Uyum (Neumorphism için ayarlandı) */
         @media (max-width: 600px) {
             :root { 
-                --base-font-size: 2.2em; 
-                --circle-size: 26px; 
-                --circle-font-size: 0.7em; 
+                --base-font-size: 1.9em; /* Küçültüldü (2.2em idi) */
+                --circle-size: 24px; /* Küçültüldü (26px idi) */
+                --circle-font-size: 0.65em; /* Küçültüldü (0.7em idi) */
                 
-                /* GÜNCELLENDİ: Mobil için daha güçlü 3D gölgeler */
-                --shadow-light: -6px -6px 12px rgba(255, 255, 255, 1);
-                --shadow-dark: 6px 6px 12px rgba(0, 0, 0, 0.12);
-                --shadow-inset: inset -4px -4px 8px rgba(255, 255, 255, 1), inset 4px 4px 8px rgba(0, 0, 0, 0.12);
+                /* GÜNCELLENDİ: Mobil için daha yumuşak 3D gölgeler */
+                --shadow-light: -5px -5px 10px rgba(255, 255, 255, 1);
+                --shadow-dark: 5px 5px 10px rgba(0, 0, 0, 0.1);
+                --shadow-inset: inset -3px -3px 6px rgba(255, 255, 255, 1), inset 3px 3px 6px rgba(0, 0, 0, 0.1);
             }
 
             #game-container { width: 98%; } 
@@ -616,14 +616,27 @@
                 gap: 10px; /* Mobil boşluk artırıldı */
             }
 
-            .l2-draggable-root { gap: 8px; font-size: calc(var(--base-font-size) * 1.1); padding: 5px 10px;}
+            /* Güncellendi: Daha kompakt kök kartı */
+            .l2-draggable-root { 
+                gap: 6px; 
+                font-size: calc(var(--base-font-size) * 1.05); /* Küçültüldü (1.1 idi) */
+                padding: 4px 8px; /* Küçültüldü (5px 10px idi) */
+            }
             
+            /* Güncellendi: Daha küçük kalıp kutusu */
             .l2-pattern-group { 
-                min-height: calc(var(--base-font-size) * 2.8); 
+                min-height: calc(var(--base-font-size) * 2.5); /* Küçültüldü (2.8 idi) */
                 padding-right: calc(var(--circle-size) + 8px); 
             }
-             .l2-pattern-number { font-size: calc(var(--base-font-size) * 0.9); width: calc(100% - var(--circle-size) - 12px); } 
-            .l2-derived-word { font-size: calc(var(--base-font-size) * 0.9); width: calc(100% - var(--circle-size) - 12px); }
+             /* Güncellendi: Daha küçük kalıp yazıları */
+             .l2-pattern-number { 
+                 font-size: calc(var(--base-font-size) * 0.85); /* Küçültüldü (0.9 idi) */
+                 width: calc(100% - var(--circle-size) - 12px); 
+             } 
+            .l2-derived-word { 
+                font-size: calc(var(--base-font-size) * 0.85); /* Küçültüldü (0.9 idi) */
+                width: calc(100% - var(--circle-size) - 12px); 
+            }
              .l2-derived-word span { font-size: 0.7em; } 
 
             #level2-container { 
@@ -640,7 +653,12 @@
                 padding: 5px;
                 margin: 5px 0; 
             } 
-            .l2-turkish-word { font-size: 1.1em; padding: 6px 12px; margin: 2px; } 
+            /* Güncellendi: Daha küçük Türkçe kelime */
+            .l2-turkish-word { 
+                font-size: 1.0em; /* Küçültüldü (1.1em idi) */
+                padding: 6px 12px; 
+                margin: 2px; 
+            } 
 
             #l2-root-area {
                 display: flex; 
@@ -658,8 +676,9 @@
                 padding-top: 5px; 
             }
             
+            /* Güncellendi: Daha küçük alt ekler */
             .l2-passive-suffixes { 
-                font-size: 3em; 
+                font-size: 2.4em; /* Küçültüldü (3em idi) */
                 text-align: center; 
                 width: 100%; 
                 margin-top: 10px; 
