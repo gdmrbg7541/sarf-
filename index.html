@@ -929,7 +929,7 @@
         "د-ر-س": { "root": ["د", "ر","س"], "words": [] }
       }
     };
-    // Sabitler
+   // Sabitler
     const ALL_AVAILABLE_PATTERNS = Object.keys(embeddedGameData.patterns);
     const patternSoundFiles = { "33": "k1k33.wav", "36": "k1k36.wav" };
     let patternSounds = {};
@@ -1006,7 +1006,9 @@
         let currentRootIndex = 0; let allRoots = []; 
         let ghostElement = null; let stayingClone = null; // Hareketsiz klon
         let currentTurkishWordIndex = 0; let currentCorrectWordsData = [];
-        let currentTouchDropTarget = null; // *** YENİ EKLENDİ: Mobil sürükleme hedefi ***
+        let currentTouchDropTarget = null; 
+        let touchOffsetX = 0; // *** GÜNCELLENDİ: Mobil sürükleme offseti ***
+        let touchOffsetY = 0; // *** GÜNCELLENDİ: Mobil sürükleme offseti ***
         
         // Önceki 'pointer' değişkenleri SİLİNDİ.
 
@@ -1456,7 +1458,7 @@
         });
 
 
-        // *** YENİ: MOBİL DOKUNMA OLAYLARI (TOUCH EVENTS) ***
+        // *** GÜNCELLENDİ: MOBİL DOKUNMA OLAYLARI (OFFSET DÜZELTMESİ) ***
 
         function handleTouchStart(e) {
             if (!gameState.isGameActive) return;
@@ -1467,14 +1469,25 @@
             draggedRootElement = e.target.closest('.l2-draggable-root');
             if (!draggedRootElement) return;
 
-            // --- Hayalet Kopyayı Oluştur (handleDragStart'tan uyarlandı) ---
+            const touch = e.touches[0];
+            const rect = draggedRootElement.getBoundingClientRect();
+            
+            // *** GÜNCELLENDİ: Dokunma offset'ini (mesafe) hesapla ve kaydet ***
+            touchOffsetX = touch.clientX - rect.left;
+            touchOffsetY = touch.clientY - rect.top;
+
+            // --- Hayalet Kopyayı Oluştur ---
             ghostElement = draggedRootElement.cloneNode(true);
             ghostElement.classList.add('drag-ghost');
-            // Stil: Hayaleti parmağı takip edecek şekilde ayarla
-            ghostElement.style.transform = 'translate(-50%, -50%) scale(1.05)'; 
+            
+            // *** GÜNCELLENDİ: Transform-origin'i ayarla, translate'i kaldır ***
+            ghostElement.style.transformOrigin = `${touchOffsetX}px ${touchOffsetY}px`;
+            // 'transform: scale(1.05)' stilini CSS'den (.drag-ghost) alacak
+            ghostElement.style.transform = 'scale(1.05)'; 
+
             document.body.appendChild(ghostElement); 
 
-            // --- Yerinde Kalan Klonu Oluştur (handleDragStart'tan uyarlandı) ---
+            // --- Yerinde Kalan Klonu Oluştur ---
             stayingClone = draggedRootElement.cloneNode(true);
             stayingClone.style.cssText = 'cursor:default; opacity:0.4; animation:none; z-index:1;';
             stayingClone.classList.remove('active');
@@ -1495,10 +1508,10 @@
             // --- Orijinali Gizle ---
             draggedRootElement.style.opacity = '0';
 
-            // --- Hayaleti Parmağın Olduğu Yere Taşı ---
-            const touch = e.touches[0];
-            ghostElement.style.left = `${touch.clientX}px`;
-            ghostElement.style.top = `${touch.clientY}px`;
+            // *** GÜNCELLENDİ: Hayaleti offset'i koruyarak konumlandır ***
+            // Hayaletin sol üst köşesini, parmağın konumu - offset olacak şekilde ayarla
+            ghostElement.style.left = `${touch.clientX - touchOffsetX}px`;
+            ghostElement.style.top = `${touch.clientY - touchOffsetY}px`;
 
             // --- Hareket ve Bırakma Dinleyicilerini Ekle ---
             document.addEventListener('touchmove', handleTouchMove, { passive: false });
@@ -1512,13 +1525,14 @@
 
             const touch = e.touches[0];
             
-            // Hayaleti parmakla hareket ettir
-            ghostElement.style.left = `${touch.clientX}px`;
-            ghostElement.style.top = `${touch.clientY}px`;
+            // *** GÜNCELLENDİ: Hayaleti offset'i koruyarak hareket ettir ***
+            ghostElement.style.left = `${touch.clientX - touchOffsetX}px`;
+            ghostElement.style.top = `${touch.clientY - touchOffsetY}px`;
 
             // Parmağın altındaki hedefi bul
             // Hayaleti geçici olarak gizle ki altındaki elementi bulabilelim
             ghostElement.style.display = 'none'; 
+            // Parmağın asıl konumu olan clientX/Y'yi kullan
             const elementUnderFinger = document.elementFromPoint(touch.clientX, touch.clientY);
             ghostElement.style.display = ''; // Tekrar göster
             
@@ -1563,6 +1577,8 @@
             ghostElement = null;
             stayingClone = null;
             currentTouchDropTarget = null;
+            touchOffsetX = 0; // *** GÜNCELLENDİ: Offset'i sıfırla ***
+            touchOffsetY = 0; // *** GÜNCELLENDİ: Offset'i sıfırla ***
 
             // --- Dinleyicileri Kaldır ---
             document.removeEventListener('touchmove', handleTouchMove);
