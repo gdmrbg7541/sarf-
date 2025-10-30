@@ -588,10 +588,10 @@
         }
 
 
-        /* *** GÜNCELLENDİ - Mobil Uyum (İyileştirildi) *** */
+        /* *** GÜNCELLENDİ - Mobil Uyum (Flex Order ile) *** */
         @media (max-width: 600px) {
             :root { 
-                --base-font-size: 1.7em; /* GÜNCELLENDİ (1.9em idi) - Genel küçültme */
+                --base-font-size: 1.7em; 
                 --circle-size: 24px; 
                 --circle-font-size: 0.65em; 
                 
@@ -613,6 +613,7 @@
                 overflow-y: visible; 
                 padding: 10px 5px; 
                 gap: 10px; 
+                order: 5; /* GÜNCELLENDİ */
             }
 
             .l2-draggable-root { 
@@ -626,11 +627,10 @@
                 padding-right: calc(var(--circle-size) + 8px); 
             }
              
-             /* GÜNCELLENDİ: Hareke boşluğu ve boyutu düzeltildi */
              .l2-pattern-number { 
                  font-size: calc(var(--base-font-size) * 0.85); 
                  width: calc(100% - var(--circle-size) - 12px); 
-                 gap: 8px; /* Harekeler arası boşluk azaltıldı (Masaüstünde 40px idi) */
+                 gap: 8px; 
              } 
              
             .l2-derived-word { 
@@ -645,20 +645,19 @@
                 padding: 10px 5px; 
             } 
             
-            /* GÜNCELLENDİ: Türkçe kelime alanı sıkıştırıldı */
             #l2-turkish-words-progress { 
                 flex-direction: row; 
                 flex-wrap: wrap; 
                 justify-content: center; 
-                gap: 6px; /* Azaltıldı (8px idi) */
+                gap: 6px; 
                 padding: 5px;
                 margin: 5px 0; 
+                order: 2; /* GÜNCELLENDİ */
             } 
             
-            /* GÜNCELLENDİ: Türkçe kelime boyutu küçültüldü */
             .l2-turkish-word { 
-                font-size: 0.9em; /* Küçültüldü (1.0em idi) */
-                padding: 6px 10px; /* Azaltıldı (6px 12px idi) */
+                font-size: 0.9em; 
+                padding: 6px 10px; 
                 margin: 2px; 
             } 
 
@@ -669,22 +668,21 @@
                 gap: 8px; 
                 padding: 5px 8px;
                 margin-bottom: 2px; 
+                order: 3; /* GÜNCELLENDİ */
             }
             
+            /* GÜNCELLENDİ: Bu kural, çocuklarını ana kapsayıcının doğrudan öğeleri yapar */
             #l2-bottom-area {
-                flex-direction: column; 
-                gap: 10px;
-                justify-content: center;
-                padding-top: 5px; 
+                display: contents; 
             }
             
-            /* GÜNCELLENDİ: Alt ek yazısı küçültüldü */
             .l2-passive-suffixes { 
-                font-size: 1.9em; /* Küçültüldü (2.4em idi) */
+                font-size: 1.9em; 
                 text-align: center; 
                 width: 100%; 
                 margin-top: 10px; 
                 margin-right: 0; 
+                order: 1; /* GÜNCELLENDİ: En üste alır */
             }
             
             #l2-draggable-root-wrapper { 
@@ -695,9 +693,19 @@
                 padding: 8px 15px; 
                 font-size: 0.9em;
                 align-self: center; 
+                order: 7; /* GÜNCELLENDİ: En altta tutar */
+                margin-top: 10px; /* GÜNCELLENDİ: Üstündeki elemanla boşluk */
             }
         
-             .pattern-number-circle { right: 5px; } 
+            .pattern-number-circle { right: 5px; } 
+
+            /* GÜNCELLENDİ: Kalan öğeler için sıralama eklendi */
+            #l2-mistakes { 
+                order: 4; 
+            }
+            #l2-global-result {
+                order: 6; 
+            }
         }
 
         /* Yatay mod uyarısı */
