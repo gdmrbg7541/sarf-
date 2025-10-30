@@ -9,7 +9,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Harmattan:wght@400;700&family=Marhey:wght@400;700&display=swap" rel="stylesheet">
 
-   <style>
+   
+
+<style>
         :root {
             --font-family: 'Marhey', sans-serif;
             --font-family-arabic: 'Harmattan', serif;
@@ -613,13 +615,14 @@
                 overflow-y: visible; 
                 padding: 10px 5px; 
                 gap: 10px; 
-                order: 5; /* GÜNCELLENDİ */
+                order: 4; 
             }
 
+            /* GÜNCELLENDİ: Kök kartı mobilde büyütüldü */
             .l2-draggable-root { 
-                gap: 6px; 
-                font-size: calc(var(--base-font-size) * 1.05); 
-                padding: 4px 8px; 
+                gap: 10px; /* Artırıldı */
+                font-size: calc(var(--base-font-size) * 1.5); /* Artırıldı (1.05 idi) */
+                padding: 10px 16px; /* Artırıldı (4px 8px idi) */
             }
             
             .l2-pattern-group { 
@@ -652,7 +655,7 @@
                 gap: 6px; 
                 padding: 5px;
                 margin: 5px 0; 
-                order: 2; /* GÜNCELLENDİ */
+                order: 1; 
             } 
             
             .l2-turkish-word { 
@@ -668,21 +671,20 @@
                 gap: 8px; 
                 padding: 5px 8px;
                 margin-bottom: 2px; 
-                order: 3; /* GÜNCELLENDİ */
+                order: 2; 
             }
             
-            /* GÜNCELLENDİ: Bu kural, çocuklarını ana kapsayıcının doğrudan öğeleri yapar */
             #l2-bottom-area {
                 display: contents; 
             }
             
             .l2-passive-suffixes { 
-                font-size: 1.9em; 
+                font-size: 1.6em; 
                 text-align: center; 
                 width: 100%; 
                 margin-top: 10px; 
                 margin-right: 0; 
-                order: 1; /* GÜNCELLENDİ: En üste alır */
+                order: 6; 
             }
             
             #l2-draggable-root-wrapper { 
@@ -693,18 +695,17 @@
                 padding: 8px 15px; 
                 font-size: 0.9em;
                 align-self: center; 
-                order: 7; /* GÜNCELLENDİ: En altta tutar */
-                margin-top: 10px; /* GÜNCELLENDİ: Üstündeki elemanla boşluk */
+                order: 7; 
+                margin-top: 10px; 
             }
         
             .pattern-number-circle { right: 5px; } 
 
-            /* GÜNCELLENDİ: Kalan öğeler için sıralama eklendi */
             #l2-mistakes { 
-                order: 4; 
+                order: 3; 
             }
             #l2-global-result {
-                order: 6; 
+                order: 5; 
             }
         }
 
